@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rasha Nieuws</title>
+  <style>
+    :root{ --bg:#f6f7fb; --card:#ffffff; --text:#0f1724; --muted:#5b6b79; --accent:#e11d48 }
+    [data-theme="dark"]{ --bg:#0b1220; --card:#0f1724; --text:#e6eef6; --muted:#98a8b8; --accent:#fb7185 }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{background:var(--bg);color:var(--text);padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#f97316);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted)}
+    .controls{display:flex;gap:8px;align-items:center}
+    .search{padding:8px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);min-width:220px}
+    .btn{padding:8px 12px;border-radius:10px;border:0;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer}
+    main{display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .feed{display:grid;gap:14px}
+    .article{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06);display:flex;gap:12px;cursor:pointer}
+    .thumb{width:120px;height:80px;border-radius:8px;background:linear-gradient(90deg,#c7d2fe,#a78bfa);flex-shrink:0}
+    .meta{flex:1}
+    .meta h3{margin:0 0 6px 0;font-size:16px}
+    .meta p{margin:0;color:var(--muted);font-size:14px}
+    .meta .info{margin-top:8px;font-size:13px;color:var(--muted)}
+    aside{position:relative}
+    .card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.04)}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.04);font-size:13px}
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
+    @media (max-width:900px){main{grid-template-columns:1fr} .thumb{width:100px;height:64px}}
+
+    /* Popup modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal.active{display:flex}
+    .modal-content{background:var(--card);color:var(--text);padding:20px;border-radius:14px;max-width:700px;width:90%;max-height:80%;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+    .modal-content h2{margin-top:0}
+    .close-btn{float:right;cursor:pointer;font-size:20px;background:none;border:none;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">RN</div>
+      <div>
+        <h1>Rasha Nieuws</h1>
+        <p class="lead">Het kortste, scherpste Nederlandse nieuws — gemaakt door jou.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="search" class="search" placeholder="Zoeken in nieuws..." aria-label="Zoeken" />
+      <button id="darkToggle" class="btn" title="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="feed" aria-live="polite">
+      <article class="article" data-title="Schoolfeest op IJburg" data-date="2025-09-12" data-tags="school,ijburg">
+        <div class="thumb" aria-hidden="true"></div>
+        <div class="meta">
+          <h3>nieuwe brash en bresh website voor nieuws</h3>
+          <p>nieuwe website om brash en bresh nieuws tevolgen! binnekort meer nieuws</p>
+          <div class="info">13 sep 2025 • <span class="tag">brash</span> <span class="tag">bresh</span></div>
+        </div>
+      </article>
+
+
+    </section>
+
+    <aside>
+      <div class="card">
+        <h4>Populaire tags</h4>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="tag">brash</button>
+          <button class="tag">bresh</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4>volgende articel</h4>
+        <p style="margin:8px 0 10px 0;color:var(--muted)">13/14 sept 2025.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    © Rasha Nieuws — mede mogelijk gemaakt door: brash bresh rash rasha khann khann fam soufiyaan sou mo alba yoshaia irshaad sim jul "sims henna" "zainedinsimran@gmail.com" "het rasha management team" "brash en bresh vol liefde"
+  </footer>
+
+  <!-- Popup modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal">✖</button>
+      <h2 id="modalTitle"></h2>
+      <p id="modalBody"></p>
+      <p id="modalInfo" style="color:var(--muted);font-size:14px"></p>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle + persistence
+    (function(){
+      const toggle = document.getElementById('darkToggle');
+      const saved = localStorage.getItem('rasha_theme');
+      if(saved === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      toggle.addEventListener('click', ()=>{
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if(isDark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('rasha_theme','light'); }
+        else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('rasha_theme','dark'); }
+      });
+    })();
+
+    // Search filter
+    document.getElementById('search').addEventListener('input', function(e){
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.article').forEach(a=>{
+        const title = a.dataset.title.toLowerCase();
+        const excerpt = a.querySelector('p')?.textContent.toLowerCase() || '';
+        a.style.display = (title.includes(q) || excerpt.includes(q)) ? 'flex' : 'none';
+      });
+    });
+
+    // Tag filtering
+    document.querySelectorAll('.tag').forEach(t=>{
+      t.addEventListener('click', ()=>{
+        const tagText = t.textContent.toLowerCase();
+        document.getElementById('search').value = tagText;
+        document.getElementById('search').dispatchEvent(new Event('input'));
+      });
+    });
+
+    // Popup modal logic
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalInfo = document.getElementById('modalInfo');
+    const closeModal = document.getElementById('closeModal');
+
+    document.querySelectorAll('.article').forEach(article => {
+      article.addEventListener('click', () => {
+        modal.classList.add('active');
+        modalTitle.textContent = article.querySelector('h3').textContent;
+        modalBody.textContent = article.querySelector('p').textContent;
+        modalInfo.textContent = article.querySelector('.info').textContent;
+      });
+    });
+
+    closeModal.addEventListener('click', ()=> modal.classList.remove('active'));
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) modal.classList.remove('active'); });
+  </script>
+</body>
+</html>
