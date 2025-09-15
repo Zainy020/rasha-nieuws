@@ -69,8 +69,10 @@
       
     <div class="article" data-title="Rasha's nachtelijke pizza-missie">
       <div class="meta"><h3>Rasha's nachtelijke pizza-missie</h3><p>Rasha probeerde om 1 uur ’s nachts de laatste pizza slice te veroveren. Brash en Bresh mochten alleen meekijken.</p>
-        <div class="info"><span class="tag">rasha</span><span class="tag">pizza</span><span class="tag">nacht</span></div></div>
+<div class="info"><span class="tag">rasha</span><span class="tag">normale artikelen</span><span class="tag">pizza</span><span class="tag">nacht</span></div></div>
     </div>
+
+      
     <div class="article" data-title="Brash en Bresh strip avontuur">
       <div class="meta"><h3>Brash en Bresh strip avontuur</h3><p>Brash en Bresh lanceren hun nieuwe strip: chaos, grappen en epische avonturen door de stad.</p>
         <div class="info"><span class="tag">brash</span><span class="tag">bresh</span><span class="tag">strip</span></div></div>
@@ -180,7 +182,23 @@
     </div>
     <div class="card" style="margin-top:16px;">
       <h4>Volgend artikel</h4>
-      <p style="margin:8px 0 0;color:var(--muted)">13/14 sept 2025</p>
+      <p style="margin:8px 0 0;color:var(--muted)">15 september 2025</p>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h4>zie ook "normale artikelen"</h4>
+      <p style="margin:8px 0 0;color:var(--muted)">nu 15 nieuwe</p>
+    </div>
+      <div class="card" style="margin-top:16px;">
+      <h4>zie ook "breaking news"</h4>
+      <p style="margin:8px 0 0;color:var(--muted)">nu 03 nieuwe</p>
+    </div>
+      <div class="card" style="margin-top:16px;">
+      <h4>zie ook "weekje"</h4>
+      <p style="margin:8px 0 0;color:var(--muted)">nu 01 nieuwe</p>
+    </div>
+      <div class="card" style="margin-top:16px;">
+      <h4>zie ook "daggrap"</h4>
+      <p style="margin:8px 0 0;color:var(--muted)">nu van 16 september al beschikbaar!</p>
     </div>
   </aside>
 </main>
@@ -197,48 +215,4 @@
     <p id="modalInfo" style="color:var(--muted);font-size:14px"></p>
   </div>
 </div>
-
-<script>
-const toggle = document.getElementById('darkToggle');
-const saved = localStorage.getItem('rasha_theme');
-if(saved==='dark') document.documentElement.setAttribute('data-theme','dark');
-toggle.addEventListener('click',()=>{
-  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  if(isDark){document.documentElement.removeAttribute('data-theme'); localStorage.setItem('rasha_theme','light');}
-  else{document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('rasha_theme','dark');}
-});
-
-document.getElementById('search').addEventListener('input', function(e){
-  const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.article').forEach(a=>{
-    const title=a.dataset.title.toLowerCase();
-    const text=a.querySelector('p')?.textContent.toLowerCase()||'';
-    a.style.display=(title.includes(q)||text.includes(q))?'flex':'none';
-  });
-});
-
-document.querySelectorAll('.tag').forEach(t=>{
-  t.addEventListener('click', ()=>{
-    document.getElementById('search').value=t.textContent;
-    document.getElementById('search').dispatchEvent(new Event('input'));
-  });
-});
-
-const modal=document.getElementById('modal');
-const modalTitle=document.getElementById('modalTitle');
-const modalBody=document.getElementById('modalBody');
-const modalInfo=document.getElementById('modalInfo');
-const closeModal=document.getElementById('closeModal');
-document.querySelectorAll('.article').forEach(article=>{
-  article.addEventListener('click', ()=>{
-    modal.classList.add('active');
-    modalTitle.textContent=article.querySelector('h3').textContent;
-    modalBody.textContent=article.querySelector('p').textContent;
-    modalInfo.textContent=article.querySelector('.info').textContent;
-  });
-});
-closeModal.addEventListener('click',()=>modal.classList.remove('active'));
-modal.addEventListener('click',e=>{if(e.target===modal) modal.classList.remove('active');});
-</script>
-</body>
-</html>
+<script> const toggle = document.getElementById('darkToggle'); const saved = localStorage.getItem('rasha_theme'); if(saved==='dark') document.documentElement.setAttribute('data-theme','dark'); toggle.addEventListener('click',()=>{ const isDark=document.documentElement.getAttribute('data-theme')==='dark'; if(isDark){document.documentElement.removeAttribute('data-theme'); localStorage.setItem('rasha_theme','light');} else{document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('rasha_theme','dark');} }); document.getElementById('search').addEventListener('input', function(e){ const q = e.target.value.toLowerCase(); document.querySelectorAll('.article').forEach(a=>{ const title=a.dataset.title.toLowerCase(); const text=a.querySelector('p')?.textContent.toLowerCase()||''; a.style.display=(title.includes(q)||text.includes(q))?'flex':'none'; }); }); document.querySelectorAll('.tag').forEach(t=>{ t.addEventListener('click', ()=>{ document.getElementById('search').value=t.textContent; document.getElementById('search').dispatchEvent(new Event('input')); }); }); const modal=document.getElementById('modal'); const modalTitle=document.getElementById('modalTitle'); const modalBody=document.getElementById('modalBody'); const modalInfo=document.getElementById('modalInfo'); const closeModal=document.getElementById('closeModal'); document.querySelectorAll('.article').forEach(article=>{ article.addEventListener('click', ()=>{ modal.classList.add('active'); modalTitle.textContent=article.querySelector('h3').textContent; modalBody.textContent=article.querySelector('p').textContent; modalInfo.textContent=article.querySelector('.info').textContent; }); }); closeModal.addEventListener('click',()=>modal.classList.remove('active')); modal.addEventListener('click',e=>{if(e.target===modal) modal.classList.remove('active');}); </script> </body> </html>
