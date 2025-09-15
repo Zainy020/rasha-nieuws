@@ -5,160 +5,240 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Rasha Nieuws</title>
   <style>
-    :root{ --bg:#f6f7fb; --card:#ffffff; --text:#0f1724; --muted:#5b6b79; --accent:#e11d48 }
-    [data-theme="dark"]{ --bg:#0b1220; --card:#0f1724; --text:#e6eef6; --muted:#98a8b8; --accent:#fb7185 }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
-    body{background:var(--bg);color:var(--text);padding:24px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#f97316);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
-    h1{font-size:20px;margin:0}
-    p.lead{margin:0;color:var(--muted)}
-    .controls{display:flex;gap:8px;align-items:center}
-    .search{padding:8px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);min-width:220px}
-    .btn{padding:8px 12px;border-radius:10px;border:0;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer}
-    main{display:grid;grid-template-columns:1fr 360px;gap:20px}
-    .feed{display:grid;gap:14px}
-    .article{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06);display:flex;gap:12px;cursor:pointer}
-    .thumb{width:120px;height:80px;border-radius:8px;background:linear-gradient(90deg,#c7d2fe,#a78bfa);flex-shrink:0}
-    .meta{flex:1}
-    .meta h3{margin:0 0 6px 0;font-size:16px}
-    .meta p{margin:0;color:var(--muted);font-size:14px}
-    .meta .info{margin-top:8px;font-size:13px;color:var(--muted)}
-    aside{position:relative}
-    .card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.04)}
-    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.04);font-size:13px}
-    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
-    @media (max-width:900px){main{grid-template-columns:1fr} .thumb{width:100px;height:64px}}
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0f1724; --muted:#5b6b79; --accent:#e11d48; --accent-hover:#fb7185;
+    }
+    [data-theme="dark"]{
+      --bg:#0b1220; --card:#0f1724; --text:#e6eef6; --muted:#98a8b8; --accent:#fb7185; --accent-hover:#f87171;
+    }
+    *{box-sizing:border-box;}
+    body, html{margin:0;padding:24px;font-family:Inter,ui-sans-serif,sans-serif;background:var(--bg);color:var(--text);}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;}
+    .brand{display:flex;align-items:center;gap:12px;}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#f97316);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;}
+    h1{margin:0;font-size:22px;}
+    p.lead{margin:0;color:var(--muted);}
+    .controls{display:flex;gap:8px;align-items:center;}
+    .search{padding:8px 12px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);min-width:220px;transition:all 0.2s;}
+    .search:focus{outline:none;border-color:var(--accent);}
+    .btn{padding:8px 12px;border-radius:12px;border:0;background:var(--card);box-shadow:0 3px 10px rgba(0,0,0,0.08);cursor:pointer;transition:all 0.2s;}
+    .btn:hover{background:var(--accent-hover);color:white;}
+    main{display:grid;grid-template-columns:1fr 320px;gap:24px;}
+    .feed{display:grid;gap:16px;}
+    .article{
+      background:var(--card); padding:16px; border-radius:16px; box-shadow:0 8px 24px rgba(15,23,42,0.08); cursor:pointer; display:flex;flex-direction:column; transition:transform 0.2s,box-shadow 0.2s;
+    }
+    .article:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(15,23,42,0.15);}
+    .meta h3{margin:0 0 6px;font-size:18px;}
+    .meta p{margin:0;color:var(--muted);font-size:14px;}
+    .meta .info{margin-top:10px;font-size:13px;color:var(--muted);}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.06);font-size:13px;margin-right:6px;margin-top:4px;}
+    aside .card{background:var(--card);padding:16px;border-radius:16px;box-shadow:0 6px 20px rgba(15,23,42,0.06);}
+    footer{margin-top:40px;text-align:center;color:var(--muted);font-size:13px;}
 
-    /* Popup modal */
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:50}
-    .modal.active{display:flex}
-    .modal-content{background:var(--card);color:var(--text);padding:20px;border-radius:14px;max-width:700px;width:90%;max-height:80%;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
-    .modal-content h2{margin-top:0}
-    .close-btn{float:right;cursor:pointer;font-size:20px;background:none;border:none;color:var(--muted)}
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:50;opacity:0;transition:opacity 0.3s ease;}
+    .modal.active{display:flex;opacity:1;}
+    .modal-content{background:var(--card);color:var(--text);padding:28px;border-radius:20px;max-width:700px;width:90%;max-height:85%;overflow:auto;box-shadow:0 15px 40px rgba(0,0,0,0.25);transform:scale(0.9);transition:transform 0.3s ease;}
+    .modal.active .modal-content{transform:scale(1);}
+    .modal-content h2{margin-top:0;font-size:22px;}
+    .close-btn{float:right;cursor:pointer;font-size:22px;background:none;border:none;color:var(--muted);transition:color 0.2s;}
+    .close-btn:hover{color:var(--accent);}
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">RN</div>
-      <div>
-        <h1>Rasha Nieuws</h1>
-        <p class="lead">Het kortste, scherpste Nederlandse nieuws — gemaakt door jou.</p>
-      </div>
-    </div>
-
-    <div class="controls">
-      <input id="search" class="search" placeholder="Zoeken in nieuws..." aria-label="Zoeken" />
-      <button id="darkToggle" class="btn" title="Toggle dark mode">🌙</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="feed" aria-live="polite">
-      <article class="article" data-title="juls oog" data-date="2025-09-13" data-tags="jul,brash">
-  <div class="thumb" aria-hidden="true"></div>
-  <div class="meta">
-    <h3>juls oog</h3>
-    <p>na aanleiding van een lang dutje doet juls oog pijn, we wensen haar beterschap (en niemand boeit schattt) - Brash</p>
-    <div class="info">13 sep 2025 • <span class="tag">jul</span> <span class="tag">brash</span></div>
-  </div>
-</article>
-
-      <article class="article" data-title="Schoolfeest op IJburg" data-date="2025-09-12" data-tags="school,ijburg">
-        <div class="thumb" aria-hidden="true"></div>
-        <div class="meta">
-          <h3>nieuwe brash en bresh website voor nieuws</h3>
-          <p>nieuwe website om brash en bresh nieuws tevolgen! binnekort meer nieuws</p>
-          <div class="info">13 sep 2025 • <span class="tag">brash</span> <span class="tag">bresh</span></div>
-        </div>
-      </article>
-
-
-    </section>
-
-    <aside>
-      <div class="card">
-        <h4>Populaire tags</h4>
-        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="tag">brash</button>
-          <button class="tag">bresh</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h4>volgende articel</h4>
-        <p style="margin:8px 0 10px 0;color:var(--muted)">13/14 sept 2025.</p>
-      </div>
-    </aside>
-  </main>
-
-  <footer>
-    © Rasha Nieuws — mede mogelijk gemaakt door: brash bresh rash rasha khann khann fam soufiyaan sou mo alba yoshaia irshaad sim jul "sims henna" "zainedinsimran@gmail.com" "het rasha management team" "brash en bresh vol liefde"
-  </footer>
-
-  <!-- Popup modal -->
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <button class="close-btn" id="closeModal">✖</button>
-      <h2 id="modalTitle"></h2>
-      <p id="modalBody"></p>
-      <p id="modalInfo" style="color:var(--muted);font-size:14px"></p>
+<header>
+  <div class="brand">
+    <div class="logo">RN</div>
+    <div>
+      <h1>Rasha Nieuws</h1>
+      <p class="lead">Het kortste, scherpste Nederlandse nieuws — gemaakt door jou.</p>
     </div>
   </div>
+  <div class="controls">
+    <input id="search" class="search" placeholder="Zoeken in nieuws..." aria-label="Zoeken" />
+    <button id="darkToggle" class="btn" title="Toggle dark mode">🌙</button>
+  </div>
+</header>
 
-  <script>
-    // Dark mode toggle + persistence
-    (function(){
-      const toggle = document.getElementById('darkToggle');
-      const saved = localStorage.getItem('rasha_theme');
-      if(saved === 'dark') document.documentElement.setAttribute('data-theme','dark');
-      toggle.addEventListener('click', ()=>{
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if(isDark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('rasha_theme','light'); }
-        else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('rasha_theme','dark'); }
-      });
-    })();
+<main>
+  <section class="feed">
+    <!-- 15 standaard artikelen -->
 
-    // Search filter
-    document.getElementById('search').addEventListener('input', function(e){
-      const q = e.target.value.toLowerCase().trim();
-      document.querySelectorAll('.article').forEach(a=>{
-        const title = a.dataset.title.toLowerCase();
-        const excerpt = a.querySelector('p')?.textContent.toLowerCase() || '';
-        a.style.display = (title.includes(q) || excerpt.includes(q)) ? 'flex' : 'none';
-      });
-    });
 
-    // Tag filtering
-    document.querySelectorAll('.tag').forEach(t=>{
-      t.addEventListener('click', ()=>{
-        const tagText = t.textContent.toLowerCase();
-        document.getElementById('search').value = tagText;
-        document.getElementById('search').dispatchEvent(new Event('input'));
-      });
-    });
+      
+    <div class="article" data-title="Rasha's nachtelijke pizza-missie">
+      <div class="meta"><h3>Rasha's nachtelijke pizza-missie</h3><p>Rasha probeerde om 1 uur ’s nachts de laatste pizza slice te veroveren. Brash en Bresh mochten alleen meekijken.</p>
+        <div class="info"><span class="tag">rasha</span><span class="tag">pizza</span><span class="tag">nacht</span></div></div>
+    </div>
+    <div class="article" data-title="Brash en Bresh strip avontuur">
+      <div class="meta"><h3>Brash en Bresh strip avontuur</h3><p>Brash en Bresh lanceren hun nieuwe strip: chaos, grappen en epische avonturen door de stad.</p>
+        <div class="info"><span class="tag">brash</span><span class="tag">bresh</span><span class="tag">strip</span></div></div>
+    </div>
+    <div class="article" data-title="Jake en Alba's snackoorlog">
+      <div class="meta"><h3>Jake en Alba's snackoorlog</h3><p>Een strijd om de laatste zak chips eindigt in compromis: beiden krijgen 3 chips. Diplomatie op topniveau.</p>
+        <div class="info"><span class="tag">jake</span><span class="tag">alba</span><span class="tag">snacks</span></div></div>
+    </div>
+    <div class="article" data-title="Mo ontdekt karaoke talent">
+      <div class="meta"><h3>Mo ontdekt karaoke talent</h3><p>Mo zong samen met Irshaad en verbaasde iedereen met een epische solo van 3 minuten.</p>
+        <div class="info"><span class="tag">mo</span><span class="tag">irshaad</span><span class="tag">karaoke</span></div></div>
+    </div>
+    <div class="article" data-title="Maxiem en Arra plannen grap">
+      <div class="meta"><h3>Maxiem en Arra plannen grap</h3><p>Een nep-bericht over stadssluiting wegens kaasovervloed valt bij iedereen in de smaak.</p>
+        <div class="info"><span class="tag">maxiem</span><span class="tag">arra</span><span class="tag">daggrap</span></div></div>
+    </div>
+    <div class="article" data-title="Yoshi chill marathons">
+      <div class="meta"><h3>Yoshi chill marathons</h3><p>Yoshi besloot 5 uur achter elkaar games te spelen en snacks te eten, zonder te bewegen.</p>
+        <div class="info"><span class="tag">yoshi</span><span class="tag">chill</span></div></div>
+    </div>
+    <div class="article" data-title="Juni ontdekt perfecte dutplek">
+      <div class="meta"><h3>Juni ontdekt perfecte dutplek</h3><p>Juni vond eindelijk een stapel kussens naast het raam: geen afleiding, alleen rust.</p>
+        <div class="info"><span class="tag">juni</span><span class="tag">chill</span></div></div>
+    </div>
+    <div class="article" data-title="Souhayl organiseert nachtspel">
+      <div class="meta"><h3>Souhayl organiseert nachtspel</h3><p>Iedereen moest door het park sluipen zonder geluid te maken. Slechts Rasha en Bresh haalden het einde.</p>
+        <div class="info"><span class="tag">souhayl</span><span class="tag">nacht</span><span class="tag">spel</span></div></div>
+    </div>
+    <div class="article" data-title="Rasha, Brash en Bresh weekoverzicht">
+      <div class="meta"><h3>Rasha, Brash en Bresh weekoverzicht</h3><p>Maandag: koekjesroof. Dinsdag: strip tekenen. Woensdag: nachtelijke dansparty. Donderdag: karaoke. Vrijdag: daggrap. Zaterdag: chill marathons. Zondag: brainstorm nieuwe chaos.</p>
+        <div class="info"><span class="tag">rasha</span><span class="tag">brash</span><span class="tag">bresh</span></div></div>
+    </div>
+    <div class="article" data-title="Alba ontdekt nieuwe snacktrend">
+      <div class="meta"><h3>Alba ontdekt nieuwe snacktrend</h3><p>Chips met chocolade – Alba zegt dat dit de toekomst is. Iedereen twijfelt nog.</p>
+        <div class="info"><span class="tag">alba</span><span class="tag">snacks</span></div></div>
+    </div>
+    <div class="article" data-title="Irshaad's epische dance moves">
+      <div class="meta"><h3>Irshaad's epische dance moves</h3><p>Irshaad start een solo-dans op de tafel, Brash en Bresh filmen het meteen. Iedereen lacht zich kapot.</p>
+        <div class="info"><span class="tag">irshaad</span><span class="tag">dance</span></div></div>
+    </div>
+    <div class="article" data-title="Maxiem en Yoshi team up">
+      <div class="meta"><h3>Maxiem en Yoshi team up</h3><p>Ze plannen een geheime prank op Jake, Alba en Juni – chaos gegarandeerd.</p>
+        <div class="info"><span class="tag">maxiem</span><span class="tag">yoshi</span></div></div>
+    </div>
+    <div class="article" data-title="Brash stunt op skateboard">
+      <div class="meta"><h3>Brash stunt op skateboard</h3><p>Brash probeert een nieuwe trick uit, valt 1 keer maar lacht het snel weg. Iedereen appt memes.</p>
+        <div class="info"><span class="tag">brash</span><span class="tag">skateboard</span></div></div>
+    </div>
+    <div class="article" data-title="Bresh ontdekt late-night snacks">
+      <div class="meta"><h3>Bresh ontdekt late-night snacks</h3><p>Bresh eet koekjes in het donker en laat niemand iets merken. Top geheimhouding.</p>
+        <div class="info"><span class="tag">bresh</span><span class="tag">nacht</span><span class="tag">snacks</span></div></div>
+    </div>
+    <div class="article" data-title="Juni en Yoshi spelen videogame-marathon">
+      <div class="meta"><h3>Juni en Yoshi spelen videogame-marathon</h3><p>Een 6 uur durende co-op sessie eindigt in overwinning en veel snacks. Beide zijn uitgeput maar blij.</p>
+        <div class="info"><span class="tag">juni</span><span class="tag">yoshi</span><span class="tag">games</span></div></div>
+    </div>
 
-    // Popup modal logic
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const modalInfo = document.getElementById('modalInfo');
-    const closeModal = document.getElementById('closeModal');
+    <!-- Daggrap -->
+    <div class="article" data-title="Daggrap 15 september">
+      <div class="meta"><h3>Daggrap 15 september</h3><p>Rasha plakt een nep-spinnetje op Brash zijn muis. Hij gilt en iedereen lacht. Maakt deel uit van de jaarlijkse grappenweek.</p>
+        <div class="info"><span class="tag">daggrap</span><span class="tag">rasha</span><span class="tag">brash</span></div></div>
+    </div>
 
-    document.querySelectorAll('.article').forEach(article => {
-      article.addEventListener('click', () => {
-        modal.classList.add('active');
-        modalTitle.textContent = article.querySelector('h3').textContent;
-        modalBody.textContent = article.querySelector('p').textContent;
-        modalInfo.textContent = article.querySelector('.info').textContent;
-      });
-    });
+    <!-- Breaking News -->
+    <div class="article" data-title="Breaking News: Jake wint snacktoernooi">
+      <div class="meta"><h3>Breaking News: Jake wint snacktoernooi</h3><p>Na urenlange strijd wint Jake het grote snacktoernooi tegen Alba en Mo. Tranen van geluk worden gedeeld.</p>
+        <div class="info"><span class="tag">breaking</span><span class="tag">jake</span><span class="tag">snacks</span></div></div>
+    </div>
+    <div class="article" data-title="Breaking News: Souhayl's geheime plan onthuld">
+      <div class="meta"><h3>Breaking News: Souhayl's geheime plan onthuld</h3><p>Souhayl had een geheime route voor een nachtspel voorbereid. Iedereen volgde blindelings en had lol.</p>
+        <div class="info"><span class="tag">breaking</span><span class="tag">souhayl</span><span class="tag">nachtspel</span></div></div>
+    </div>
+    <div class="article" data-title="Breaking News: Maxiem en Arra winnen improvisatiebattle">
+      <div class="meta"><h3>Breaking News: Maxiem en Arra winnen improvisatiebattle</h3><p>In een snelle improvisatie challenge winnen Maxiem en Arra de hoofdprijs: eeuwige roem en snacks.</p>
+        <div class="info"><span class="tag">breaking</span><span class="tag">maxiem</span><span class="tag">arra</span></div></div>
+    </div>
 
-    closeModal.addEventListener('click', ()=> modal.classList.remove('active'));
-    modal.addEventListener('click', (e)=>{ if(e.target === modal) modal.classList.remove('active'); });
-  </script>
+    <!-- Weekje met -->
+    <div class="article" data-title="Weekje met Rasha en co">
+      <div class="meta"><h3>Weekje met Rasha en co</h3><p>Maandag: chaos. Dinsdag: snacks. Woensdag: strip tekenen. Donderdag: karaoke. Vrijdag: daggrap. Zaterdag: chill. Zondag: planning nieuwe chaos.</p>
+        <div class="info"><span class="tag">weekje</span><span class="tag">rasha</span><span class="tag">brash</span></div></div>
+    </div>
+
+  </section>
+
+  <aside>
+    <div class="card">
+      <h4>Populaire tags</h4>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="tag">rasha</button>
+        <button class="tag">brash</button>
+        <button class="tag">bresh</button>
+        <button class="tag">jake</button>
+        <button class="tag">alba</button>
+        <button class="tag">mo</button>
+        <button class="tag">yoshi</button>
+        <button class="tag">juni</button>
+        <button class="tag">maxiem</button>
+        <button class="tag">arra</button>
+        <button class="tag">irshaad</button>
+        <button class="tag">daggrap</button>
+        <button class="tag">breaking</button>
+        <button class="tag">weekje</button>
+        <button class="tag">nacht</button>
+        <button class="tag">games</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h4>Volgend artikel</h4>
+      <p style="margin:8px 0 0;color:var(--muted)">13/14 sept 2025</p>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  © Rasha Nieuws — mede mogelijk gemaakt door: brash bresh rasha khann fam soufiyaan sou mo alba yoshaia irshaad sim jul
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeModal">✖</button>
+    <h2 id="modalTitle"></h2>
+    <p id="modalBody"></p>
+    <p id="modalInfo" style="color:var(--muted);font-size:14px"></p>
+  </div>
+</div>
+
+<script>
+const toggle = document.getElementById('darkToggle');
+const saved = localStorage.getItem('rasha_theme');
+if(saved==='dark') document.documentElement.setAttribute('data-theme','dark');
+toggle.addEventListener('click',()=>{
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){document.documentElement.removeAttribute('data-theme'); localStorage.setItem('rasha_theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('rasha_theme','dark');}
+});
+
+document.getElementById('search').addEventListener('input', function(e){
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.article').forEach(a=>{
+    const title=a.dataset.title.toLowerCase();
+    const text=a.querySelector('p')?.textContent.toLowerCase()||'';
+    a.style.display=(title.includes(q)||text.includes(q))?'flex':'none';
+  });
+});
+
+document.querySelectorAll('.tag').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.getElementById('search').value=t.textContent;
+    document.getElementById('search').dispatchEvent(new Event('input'));
+  });
+});
+
+const modal=document.getElementById('modal');
+const modalTitle=document.getElementById('modalTitle');
+const modalBody=document.getElementById('modalBody');
+const modalInfo=document.getElementById('modalInfo');
+const closeModal=document.getElementById('closeModal');
+document.querySelectorAll('.article').forEach(article=>{
+  article.addEventListener('click', ()=>{
+    modal.classList.add('active');
+    modalTitle.textContent=article.querySelector('h3').textContent;
+    modalBody.textContent=article.querySelector('p').textContent;
+    modalInfo.textContent=article.querySelector('.info').textContent;
+  });
+});
+closeModal.addEventListener('click',()=>modal.classList.remove('active'));
+modal.addEventListener('click',e=>{if(e.target===modal) modal.classList.remove('active');});
+</script>
 </body>
 </html>
